@@ -14,6 +14,13 @@ void tuh_hid_mount_cb(uint8_t dev_addr, uint8_t instance, uint8_t const* desc_re
 	}
 	const char* protocol_str[] = { "None", "Keyboard", "Mouse" };
 	printf("Device with address %d, instance %d is a %s.\r\n", dev_addr, instance, protocol_str[itf_protocol]);
+
+	// request to receive report
+  	// tuh_hid_report_received_cb() will be invoked when report is available
+  	if ( !tuh_hid_receive_report(dev_addr, instance) )
+  	{
+    		printf("Error: cannot request to receive report\r\n");
+    	}
 }
 
 // tuh_hid_report_received_cb is executed when data is received from the keyboard or mouse.
@@ -27,6 +34,13 @@ void tuh_hid_report_received_cb(uint8_t dev_addr, uint8_t instance, uint8_t cons
 		process_mouse_report((hid_mouse_report_t const*) report);
 		break;
 	}
+
+	// request to receive next report
+  	// tuh_hid_report_received_cb() will be invoked when report is available
+  	if ( !tuh_hid_receive_report(dev_addr, instance) )
+  	{
+    		printf("Error: cannot request to receive report\r\n");
+  	}
 }
 
 // tuh_hid_umount_cb is executed when a device is unmounted.
